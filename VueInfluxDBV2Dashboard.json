@@ -1,0 +1,174 @@
+{
+  "id": 2,
+  "gridPos": {
+    "h": 26,
+    "w": 23,
+    "x": 0,
+    "y": 0
+  },
+  "type": "timeseries",
+  "title": "75 Queens Ln Energy Usage",
+  "datasource": {
+    "type": "influxdb",
+    "uid": "We4UEIi4z"
+  },
+  "pluginVersion": "9.0.6",
+  "maxDataPoints": 10000,
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "drawStyle": "bars",
+        "lineInterpolation": "linear",
+        "barAlignment": 0,
+        "lineWidth": 3,
+        "fillOpacity": 72,
+        "gradientMode": "opacity",
+        "spanNulls": false,
+        "showPoints": "auto",
+        "pointSize": 5,
+        "stacking": {
+          "mode": "normal",
+          "group": "A"
+        },
+        "axisPlacement": "auto",
+        "axisLabel": "",
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "palette-classic"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "unit": "watt"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Fridge & Outlets"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "#56A64B",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "__systemRef": "hideSeriesFrom",
+        "matcher": {
+          "id": "byNames",
+          "options": {
+            "mode": "exclude",
+            "names": [
+              "Family Bathroom Heater/Fan"
+            ],
+            "prefix": "All except:",
+            "readOnly": true
+          }
+        },
+        "properties": [
+          {
+            "id": "custom.hideFrom",
+            "value": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Family Bathroom Heater/Fan"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "#1d3c6a",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Microwave"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "super-light-orange",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Master/Middle Bedroom"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "dark-purple",
+              "mode": "fixed"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "tooltip": {
+      "mode": "multi",
+      "sort": "none"
+    },
+    "legend": {
+      "displayMode": "list",
+      "placement": "bottom",
+      "calcs": []
+    }
+  },
+  "targets": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "We4UEIi4z"
+      },
+      "query": "FinalOutput = [\"_time\", \"_value\", \"device_name\"]\n\ndata = from(bucket: \"home_data_bucket\")\n    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n    |> filter(fn: (r) => r._measurement == \"energy_usage\" \n        and r.detailed == \"False\" and r._field == \"usage\")\n\n// data1 = data    \n//     |> filter(fn: (r) => r.device_name == \"Home Power Monitor-1\")\n//     |> keep(columns:FinalOutput)\n//     |> set(key: \"device_name\", value: \"Unknown 1\")\n//     |> yield(name: \"Circuit 1\")\ndata2 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-2\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Dryer\")\n    |> yield(name: \"Circuit 2\")\ndata3 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-3\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Kitchen Outlets\")\n    |> yield(name: \"Circuit 3\")\ndata4 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-4\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Waste Disposal\")\n    |> yield(name: \"Circuit 4\")    \ndata5 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-5\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Family Bathroom Heater/Fan\")\n    |> yield(name: \"Circuit 5\")    \ndata6 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-6\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Fridge & Outlets\")\n    |> yield(name: \"Circuit 6\")    \ndata7 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-7\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Water Heater\")\n    |> yield(name: \"Circuit 7\")    \ndata8 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-8\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Heat Pump\")\n    |> yield(name: \"Circuit 8\")    \ndata9 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-9\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Microwave\")\n    |> yield(name: \"Circuit 9\")    \n// data10 = data    \n//     |> filter(fn: (r) => r.device_name == \"Home Power Monitor-10\")\n//     |> keep(columns:FinalOutput)\n//     |> set(key: \"device_name\", value: \"Garage Panel 2\")\n//     |> yield(name: \"Circuit 10\")    \ndata11 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-11\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Washer\")\n    |> yield(name: \"Circuit 11\")    \ndata12 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-12\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Family Bathroom\")\n    |> yield(name: \"Circuit 12\")    \ndata13 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-13\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Master/Middle Bedroom\")\n    |> yield(name: \"Circuit 13\")    \ndata14 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-14\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Dishwasher\")\n    |> yield(name: \"Circuit 14\")    \ndata15 = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-15\")\n    |> keep(columns:FinalOutput)\n    |> set(key: \"device_name\", value: \"Heat Pump Auxiliary\")\n    |> yield(name: \"Circuit 15\")    \n// data16 = data    \n//     |> filter(fn: (r) => r.device_name == \"Home Power Monitor-16\")\n//     |> keep(columns:FinalOutput)\n//     |> set(key: \"device_name\", value: \"Garage Panel\")\n//     |> yield(name: \"Circuit 16\")        \n         \n\ndataGaragePanelTotal = data    \n    |> filter(fn: (r) => r.device_name == \"Home Power Monitor-16\" or r.device_name == \"Home Power Monitor-10\")\n    |> keep(columns:FinalOutput)\n    |> group(columns: [\"_time\"])\n    |> sum()\n    |> group()       \n    |> rename(columns: {_value: \"Garage Panel Total\"})\n    |> yield(name: \"Garage Panel Total\")     \n    \n",
+      "refId": "A"
+    }
+  ]
+}
